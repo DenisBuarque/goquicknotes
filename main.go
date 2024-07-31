@@ -6,20 +6,28 @@ import (
 )
 
 func noteList(w http.ResponseWriter, r *http.Request) {
+	//w.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(w, "Lista de notas.")
 }
 
 func noteView(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Exibir uma nota.")
+
+	id := r.URL.Query().Get("id")
+	if id == "" {
+		http.Error(w, "id não encontrado", http.StatusNotFound)
+		return
+	}
+	fmt.Fprint(w, "Exibir uma nota."+id)
 }
 
 func noteCreate(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
+	if r.Method != http.MethodPost {
 
-		w.Header().Set("Allow", "POST") // informa o tipo de metodo da requisição
+		w.Header().Set("Allow", http.MethodPost) // informa o tipo de metodo obrogatório da requisição
 
 		w.WriteHeader(405)
 		fmt.Fprint(w, "Método não permitido")
+		//http.Error(w, "Métpdo não permidito", http.StatusMethodNotAllowed)
 		return
 	}
 	fmt.Fprint(w, "Criar uma noto.")
