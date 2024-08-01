@@ -3,7 +3,11 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
 func noteList(w http.ResponseWriter, r *http.Request) {
@@ -67,7 +71,15 @@ func noteStore(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	fmt.Println("Servidor rodando na porta 5000")
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Erro loading .env file")
+	}
+
+	port := os.Getenv("SERVER_PORT")
+
+	fmt.Println("Servidor rodando na porta: " + port)
 	mux := http.NewServeMux()
 
 	cssHandler := http.FileServer(http.Dir("views/static/"))
@@ -78,5 +90,5 @@ func main() {
 	mux.HandleFunc("/note/create", noteCreate)
 	mux.HandleFunc("/note/create/store", noteStore)
 
-	http.ListenAndServe(":5000", mux)
+	http.ListenAndServe(port, mux)
 }
