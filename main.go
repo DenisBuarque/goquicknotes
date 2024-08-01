@@ -7,15 +7,24 @@ import (
 )
 
 func noteList(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("views/templates/home.html")
+	files := []string{
+		"views/templates/layoutBase.html",
+		"views/templates/pages/home.html",
+	}
+	t, err := template.ParseFiles(files...)
 	if err != nil {
 		http.Error(w, "Error ao carregar página.", http.StatusInternalServerError)
 		return
 	}
-	t.Execute(w, nil)
+	t.ExecuteTemplate(w, "layoutBase", nil)
 }
 
 func noteView(w http.ResponseWriter, r *http.Request) {
+
+	files := []string{
+		"views/templates/layoutBase.html",
+		"views/templates/pages/show.html",
+	}
 
 	id := r.URL.Query().Get("id")
 	if id == "" {
@@ -23,15 +32,28 @@ func noteView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	t, err := template.ParseFiles("views/templates/show.html")
+	t, err := template.ParseFiles(files...)
 	if err != nil {
 		http.Error(w, "Erro ao carregar página show", http.StatusInternalServerError)
 		return
 	}
-	t.Execute(w, id)
+	t.ExecuteTemplate(w, "layoutBase", id)
 }
 
 func noteCreate(w http.ResponseWriter, r *http.Request) {
+	files := []string{
+		"views/templates/layoutBase.html",
+		"views/templates/pages/create.html",
+	}
+	t, err := template.ParseFiles(files...)
+	if err != nil {
+		http.Error(w, "Error ao carregar página.", http.StatusInternalServerError)
+		return
+	}
+	t.ExecuteTemplate(w, "layoutBase", nil)
+}
+
+func noteStore(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 
 		w.Header().Set("Allow", http.MethodPost) // informa o tipo de metodo obrogatório da requisição
@@ -51,6 +73,7 @@ func main() {
 	mux.HandleFunc("/", noteList)
 	mux.HandleFunc("/note/view", noteView)
 	mux.HandleFunc("/note/create", noteCreate)
+	mux.HandleFunc("/note/create/store", noteStore)
 
 	http.ListenAndServe(":5000", mux)
 }
