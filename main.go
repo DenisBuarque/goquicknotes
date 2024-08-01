@@ -70,6 +70,9 @@ func main() {
 	fmt.Println("Servidor rodando na porta 5000")
 	mux := http.NewServeMux()
 
+	cssHandler := http.FileServer(http.Dir("views/static/"))
+	mux.Handle("/static/", http.StripPrefix("/static/", cssHandler))
+
 	mux.HandleFunc("/", noteList)
 	mux.HandleFunc("/note/view", noteView)
 	mux.HandleFunc("/note/create", noteCreate)
