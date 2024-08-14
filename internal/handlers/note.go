@@ -6,7 +6,13 @@ import (
 	"net/http"
 )
 
-func NoteList(w http.ResponseWriter, r *http.Request) {
+type noteHandler struct{}
+
+func NewNoteHandler() *noteHandler {
+	return &noteHandler{}
+}
+
+func (nh *noteHandler) NoteList(w http.ResponseWriter, r *http.Request) {
 	files := []string{
 		"views/templates/layoutBase.html",
 		"views/templates/pages/home.html",
@@ -19,7 +25,7 @@ func NoteList(w http.ResponseWriter, r *http.Request) {
 	t.ExecuteTemplate(w, "layoutBase", nil)
 }
 
-func NoteView(w http.ResponseWriter, r *http.Request) {
+func (nh *noteHandler) NoteView(w http.ResponseWriter, r *http.Request) {
 
 	files := []string{
 		"views/templates/layoutBase.html",
@@ -40,7 +46,7 @@ func NoteView(w http.ResponseWriter, r *http.Request) {
 	t.ExecuteTemplate(w, "layoutBase", id)
 }
 
-func NoteCreate(w http.ResponseWriter, r *http.Request) {
+func (nh *noteHandler) NoteCreate(w http.ResponseWriter, r *http.Request) {
 	files := []string{
 		"views/templates/layoutBase.html",
 		"views/templates/pages/create.html",
@@ -53,7 +59,7 @@ func NoteCreate(w http.ResponseWriter, r *http.Request) {
 	t.ExecuteTemplate(w, "layoutBase", nil)
 }
 
-func NoteStore(w http.ResponseWriter, r *http.Request) {
+func (nh *noteHandler) NoteStore(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 
 		w.Header().Set("Allow", http.MethodPost) // informa o tipo de metodo obrogatório da requisição
