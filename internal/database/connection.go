@@ -1,4 +1,4 @@
-package main
+package connnection
 
 import (
 	"context"
