@@ -37,13 +37,33 @@ func main() {
 	cssHandler := http.FileServer(http.Dir("views/static/"))
 	mux.Handle("/static/", http.StripPrefix("/static/", cssHandler))
 
-	// Lista data repository Notes in Data Base
+	// Access repository Notes with conection in DB
 	noteRepo := repositories.NewNoteRepository(dbpool)
-	notes, err := noteRepo.List()
+
+	/*
+		// Listing data notes
+		notes, err := noteRepo.List()
+		if err != nil {
+			fmt.Print(err)
+		}
+		fmt.Println(notes)
+	*/
+
+	/*
+		// Get note id
+		note, err := noteRepo.GetById(1)
+		if err != nil {
+			fmt.Print(err)
+		}
+		fmt.Println(note)
+	*/
+
+	// Create Note
+	note, err := noteRepo.Create("Curso Golang", "Aprendendo a linguagem Go", "#AA0000")
 	if err != nil {
 		fmt.Print(err)
 	}
-	fmt.Println(notes)
+	fmt.Print(note)
 
 	// Routes
 	mux.HandleFunc("/", handlers.NewNoteHandler().NoteList)
