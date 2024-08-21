@@ -12,7 +12,8 @@ type NoteRepository interface {
 	List() ([]models.Note, error)
 	GetById(id int) (*models.Note, error)
 	Create(title, content, color string) (*models.Note, error)
-	Update(ID int, title, content, color string) (*models.Note, error)
+	Update(id int, title, content, color string) (*models.Note, error)
+	Delete(id int) error
 }
 
 func NewNoteRepository(dbpool *pgxpool.Pool) NoteRepository {
@@ -93,5 +94,12 @@ func (conn *connectDB) Update(id int, title, content, color string) (*models.Not
 		return nil, err
 	}
 	return &note, nil
+}
 
+func (conn *connectDB) Delete(id int) error {
+	_, err := conn.db.Exec(context.Background(), `DELETE FROM notes WHERE id = $1`, id)
+	if err != nil {
+		return err
+	}
+	return nil
 }

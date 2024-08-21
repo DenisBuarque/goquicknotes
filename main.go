@@ -67,12 +67,21 @@ func main() {
 		fmt.Print(note)
 	*/
 
-	// Update Note
-	note, err := noteRepo.Update(1, "Laravel 10", "Aprendento o framework Php", "#FFAAAA")
+	/*
+		// Update Note
+		note, err := noteRepo.Update(1, "Laravel 10", "Aprendento o framework Php", "#FFAAAA")
+		if err != nil {
+			fmt.Print(err.Error())
+		}
+		fmt.Println(note)
+	*/
+
+	// Delete Noite
+	err = noteRepo.Delete(1)
 	if err != nil {
 		fmt.Print(err.Error())
 	}
-	fmt.Println(note)
+	fmt.Println("Note excluído com sucesso.")
 
 	// Routes
 	mux.HandleFunc("/", handlers.NewNoteHandler().NoteList)
