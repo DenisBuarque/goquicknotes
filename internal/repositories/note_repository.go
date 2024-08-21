@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"time"
 
 	"github.com/DenisBuarque/goquicknotes.git/internal/models"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -11,6 +12,7 @@ type NoteRepository interface {
 	List() ([]models.Note, error)
 	GetById(id int) (*models.Note, error)
 	Create(title, content, color string) (*models.Note, error)
+	Update(ID int, title, content, color string) (*models.Note, error)
 }
 
 func NewNoteRepository(dbpool *pgxpool.Pool) NoteRepository {
@@ -63,4 +65,33 @@ func (conn *connectDB) Create(title, content, color string) (*models.Note, error
 		return nil, err
 	}
 	return &note, nil
+}
+
+func (conn *connectDB) Update(id int, title, content, color string) (*models.Note, error) {
+
+	var note models.Note
+
+	note.ID = id
+
+	if len(title) > 0 {
+		note.Title = title
+	}
+
+	if len(content) > 0 {
+		note.Content = content
+	}
+
+	if len(color) > 0 {
+		note.Color = color
+	}
+
+	note.UpdatedAt = time.Now()
+
+	query := `UPDATE notes SET title=$1, content=$2, color=$3, updated_at=$4 WHERE id=$5`
+	_, err := conn.db.Exec(context.Background(), query, note.Title, note.Content, note.Color, note.UpdatedAt, note.ID)
+	if err != nil {
+		return nil, err
+	}
+	return &note, nil
+
 }

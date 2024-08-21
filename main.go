@@ -44,7 +44,7 @@ func main() {
 		// Listing data notes
 		notes, err := noteRepo.List()
 		if err != nil {
-			fmt.Print(err)
+			fmt.Print(err.Error())
 		}
 		fmt.Println(notes)
 	*/
@@ -53,17 +53,26 @@ func main() {
 		// Get note id
 		note, err := noteRepo.GetById(1)
 		if err != nil {
-			fmt.Print(err)
+			fmt.Print(err.Error())
 		}
 		fmt.Println(note)
 	*/
 
-	// Create Note
-	note, err := noteRepo.Create("Curso Golang", "Aprendendo a linguagem Go", "#AA0000")
+	/*
+		// Create Note
+		note, err := noteRepo.Create("Javascript", "Aprendendo a framework NestJS", "#AAAACC")
+		if err != nil {
+			fmt.Print(err.Error())
+		}
+		fmt.Print(note)
+	*/
+
+	// Update Note
+	note, err := noteRepo.Update(1, "Laravel 10", "Aprendento o framework Php", "#FFAAAA")
 	if err != nil {
-		fmt.Print(err)
+		fmt.Print(err.Error())
 	}
-	fmt.Print(note)
+	fmt.Println(note)
 
 	// Routes
 	mux.HandleFunc("/", handlers.NewNoteHandler().NoteList)
