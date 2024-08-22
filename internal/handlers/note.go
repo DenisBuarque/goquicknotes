@@ -4,12 +4,17 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"strconv"
+
+	"github.com/DenisBuarque/goquicknotes.git/internal/repositories"
 )
 
-type noteHandler struct{}
+type noteHandler struct {
+	repo repositories.NoteRepository
+}
 
-func NewNoteHandler() *noteHandler {
-	return &noteHandler{}
+func NewNoteHandler(repository repositories.NoteRepository) *noteHandler {
+	return &noteHandler{repo: repository}
 }
 
 func (nh *noteHandler) NoteList(w http.ResponseWriter, r *http.Request) {
@@ -22,7 +27,14 @@ func (nh *noteHandler) NoteList(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error ao carregar página.", http.StatusInternalServerError)
 		return
 	}
-	t.ExecuteTemplate(w, "layoutBase", nil)
+
+	// access note repository
+	notes, err := nh.repo.List()
+	if err != nil {
+		http.Error(w, "Error ao listar dados.", http.StatusInternalServerError)
+		return
+	}
+	t.ExecuteTemplate(w, "layoutBase", notes)
 }
 
 func (nh *noteHandler) NoteView(w http.ResponseWriter, r *http.Request) {
@@ -32,8 +44,8 @@ func (nh *noteHandler) NoteView(w http.ResponseWriter, r *http.Request) {
 		"views/templates/pages/show.html",
 	}
 
-	id := r.URL.Query().Get("id")
-	if id == "" {
+	idParam := r.URL.Query().Get("id")
+	if idParam == "" {
 		http.Error(w, "id não encontrado", http.StatusNotFound)
 		return
 	}
@@ -43,7 +55,18 @@ func (nh *noteHandler) NoteView(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Erro ao carregar página show", http.StatusInternalServerError)
 		return
 	}
-	t.ExecuteTemplate(w, "layoutBase", id)
+
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		panic(err)
+	}
+
+	note, err := nh.repo.GetById(id)
+	if err != nil {
+		panic(err)
+	}
+
+	t.ExecuteTemplate(w, "layoutBase", note)
 }
 
 func (nh *noteHandler) NoteCreate(w http.ResponseWriter, r *http.Request) {

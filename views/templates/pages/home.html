@@ -6,4 +6,17 @@ Página principal
 {{ define "content" }}
 <h1>Lista de notas e lembretes.</h1>
 
+{{if eq (len .) 0}}
+<p>Nenhuma anotação criada.</p>
+
+{{ end }}
+
+<ul>
+  {{range .}}
+  <li>
+    {{.id}} {{.Title}}
+  </li>
+  {{end}}
+</ul>
+
 {{ end }}

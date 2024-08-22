@@ -40,56 +40,16 @@ func main() {
 	// Access repository Notes with conection in DB
 	noteRepo := repositories.NewNoteRepository(dbpool)
 
-	/*
-		// Listing data notes
-		notes, err := noteRepo.List()
-		if err != nil {
-			fmt.Print(err.Error())
-		}
-		fmt.Println(notes)
-	*/
-
-	/*
-		// Get note id
-		note, err := noteRepo.GetById(1)
-		if err != nil {
-			fmt.Print(err.Error())
-		}
-		fmt.Println(note)
-	*/
-
-	/*
-		// Create Note
-		note, err := noteRepo.Create("Javascript", "Aprendendo a framework NestJS", "#AAAACC")
-		if err != nil {
-			fmt.Print(err.Error())
-		}
-		fmt.Print(note)
-	*/
-
-	/*
-		// Update Note
-		note, err := noteRepo.Update(1, "Laravel 10", "Aprendento o framework Php", "#FFAAAA")
-		if err != nil {
-			fmt.Print(err.Error())
-		}
-		fmt.Println(note)
-	*/
-
-	// Delete Noite
-	err = noteRepo.Delete(1)
-	if err != nil {
-		fmt.Print(err.Error())
-	}
-	fmt.Println("Note excluído com sucesso.")
-
 	// Routes
-	mux.HandleFunc("/", handlers.NewNoteHandler().NoteList)
-	mux.HandleFunc("/note/view", handlers.NewNoteHandler().NoteView)
-	mux.HandleFunc("/note/create", handlers.NewNoteHandler().NoteCreate)
-	mux.HandleFunc("/note/create/store", handlers.NewNoteHandler().NoteStore)
+	mux.HandleFunc("/", handlers.NewNoteHandler(noteRepo).NoteList)
+	mux.HandleFunc("/note/view", handlers.NewNoteHandler(noteRepo).NoteView)
+	mux.HandleFunc("/note/create", handlers.NewNoteHandler(noteRepo).NoteCreate)
+	mux.HandleFunc("/note/create/store", handlers.NewNoteHandler(noteRepo).NoteStore)
 	// Server
 	port := os.Getenv("SERVER_PORT")
 	fmt.Println("Servidor rodando na porta: " + port)
-	http.ListenAndServe(port, mux)
+	err = http.ListenAndServe(port, mux)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
