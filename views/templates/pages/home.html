@@ -11,12 +11,23 @@ Página principal
 
 {{ end }}
 
-<ul>
+<table>
+  <tr>
+    <th>Id</th>
+    <th>Titulo</th>
+    <th>Conteúdo</th>
+    <th>Cor</th>
+    <th>Detalhe</th>
+  </tr>
   {{range .}}
-  <li>
-    {{.ID}} {{.Title}}
-  </li>
+  <tr>
+    <td>{{.ID}}</td>
+    <td>{{.Title}}</td>
+    <td>{{.Content}}</td>
+    <td>{{.Color}}</td>
+    <td><a href="/note/view?id={{.ID}}">Ver</a>
+  </tr>
   {{end}}
-</ul>
+</table>
 
 {{ end }}

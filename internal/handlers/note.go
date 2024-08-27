@@ -10,11 +10,11 @@ import (
 )
 
 type noteHandler struct {
-	repo repositories.NoteRepository
+	repository repositories.NoteRepository
 }
 
-func NewNoteHandler(repository repositories.NoteRepository) *noteHandler {
-	return &noteHandler{repo: repository}
+func NewNoteHandler(repo repositories.NoteRepository) *noteHandler {
+	return &noteHandler{repository: repo}
 }
 
 func (nh *noteHandler) NoteList(w http.ResponseWriter, r *http.Request) {
@@ -29,12 +29,12 @@ func (nh *noteHandler) NoteList(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// access note repository
-	notes, err := nh.repo.List()
+	notes, err := nh.repository.List()
 	if err != nil {
 		http.Error(w, "Error ao listar dados.", http.StatusInternalServerError)
 		return
 	}
-	t.ExecuteTemplate(w, "layoutBase", notes)
+	t.ExecuteTemplate(w, "layoutBase", listNoteResponsedto(notes))
 }
 
 func (nh *noteHandler) NoteView(w http.ResponseWriter, r *http.Request) {
@@ -61,12 +61,12 @@ func (nh *noteHandler) NoteView(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	note, err := nh.repo.GetById(id)
+	note, err := nh.repository.GetById(id)
 	if err != nil {
 		panic(err)
 	}
 
-	t.ExecuteTemplate(w, "layoutBase", note)
+	t.ExecuteTemplate(w, "layoutBase", noteResponseDto(note))
 }
 
 func (nh *noteHandler) NoteCreate(w http.ResponseWriter, r *http.Request) {
