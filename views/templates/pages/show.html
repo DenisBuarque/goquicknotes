@@ -4,9 +4,7 @@ Detalhes da notação
 {{ end }}
 
 {{ define "content" }}
-<h1>Título da anotação {{.ID}}
-  {{ .Title }}
-</h1>
-<p>Conteúdo da anotação aqui...</p>
+<h2>{{.ID}} - {{ .Title }}</h2>
+<p>{{ .Content }}</p>
 
 {{ end }}

@@ -4,7 +4,7 @@ Página principal
 {{ end }}
 
 {{ define "content" }}
-<h1>Lista de notas e lembretes.</h1>
+<h3>Lista de notas e lembretes.</h3>
 
 {{if eq (len .) 0}}
 <p>Nenhuma anotação criada.</p>
@@ -14,7 +14,7 @@ Página principal
 <ul>
   {{range .}}
   <li>
-    {{.id}} {{.Title}}
+    {{.ID}} {{.Title}}
   </li>
   {{end}}
 </ul>
