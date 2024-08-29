@@ -4,4 +4,19 @@ Criar nova notação
 
 {{ define "content" }}
     <h1>Nova notação</h1>
+    <form method="post" action="/note/store">
+        <div>
+            <label>Título</label>
+            <input type="text" name="title" id="title"/>
+        </div>
+        <div>
+            <label>Conteúdo:</label>
+            <textarea name="content" id="content"></textarea>
+        </div>
+        <div>
+            <label>Color:</label>
+            <input type="text" name="color" id="color"/>
+        </div>
+        <button type="submit">Salvar</button>
+    </form>
 {{ end}}

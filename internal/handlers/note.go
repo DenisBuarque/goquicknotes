@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"context"
 	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/DenisBuarque/goquicknotes.git/internal/repositories"
 )
@@ -29,7 +31,7 @@ func (nh *noteHandler) NoteList(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// access note repository
-	notes, err := nh.repository.List()
+	notes, err := nh.repository.List(r.Context())
 	if err != nil {
 		http.Error(w, "Error ao listar dados.", http.StatusInternalServerError)
 		return
@@ -61,7 +63,11 @@ func (nh *noteHandler) NoteView(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	note, err := nh.repository.GetById(id)
+	// verifica se a requisição ao banco demora mais de 1 min então cancela
+	ctx, cancel := context.WithTimeout(r.Context(), time.Minute)
+	defer cancel()
+
+	note, err := nh.repository.GetById(ctx, id)
 	if err != nil {
 		panic(err)
 	}
@@ -84,13 +90,23 @@ func (nh *noteHandler) NoteCreate(w http.ResponseWriter, r *http.Request) {
 
 func (nh *noteHandler) NoteStore(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-
-		w.Header().Set("Allow", http.MethodPost) // informa o tipo de metodo obrogatório da requisição
-
+		// informa o tipo de metodo obrigatório da requisição
+		w.Header().Set("Allow", http.MethodPost)
+		// escreve o tipo de erro no cabeçalho
 		w.WriteHeader(405)
 		fmt.Fprint(w, "Método não permitido")
 		//http.Error(w, "Métpdo não permidito", http.StatusMethodNotAllowed)
 		return
 	}
-	fmt.Fprint(w, "Criar uma noto.")
+
+	err := r.ParseForm()
+	if err != nil {
+		panic(err)
+	}
+	title := r.PostForm.Get("title")
+	content := r.PostForm.Get("content")
+	color := r.PostForm.Get("color")
+
+	fmt.Fprint(w, title, content, color)
+	return
 }
