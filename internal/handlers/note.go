@@ -107,6 +107,11 @@ func (nh *noteHandler) NoteStore(w http.ResponseWriter, r *http.Request) {
 	content := r.PostForm.Get("content")
 	color := r.PostForm.Get("color")
 
-	fmt.Fprint(w, title, content, color)
-	return
+	note, err := nh.repository.Create(r.Context(), title, content, color)
+	if err != nil {
+		http.Error(w, "Erro ao criar nota.", http.StatusInternalServerError)
+	}
+
+	//http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, fmt.Sprintf("/note/view?id=%d", note.ID), http.StatusSeeOther)
 }
